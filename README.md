@@ -1,18 +1,68 @@
-# [nom]
+# config-macos
 
-## À propos de [nom]
+## À propos de config-macos
 
+Simple script de configuration de macOS prenant en charge d'OS X 10.11 a macOS 26.
 
 ## Fonctionnalités
 
+- Installation des applications de bases
+- Installation des dependances de bases
+- Telechargement des fonds d'ecrans
+- Creation de l'environnement de travail
+- Parametrage de la session
+
+## Prise en charge
+
+### Systemes d'exploitations
+
+- OS X 10.11 El Capitan
+- macOS 10.12 Sierra
+- macOS 10.13 High Sierra
+- macOS 10.14 Mojave
+- macOS 10.15 Catalina
+- macOS 11 Big Sur
+- macOS 12 Monterey
+- macOS 13 Ventura
+- macOS 14 Sonoma
+- macOS 15 Sequoia
+- macOS 26
+
+### Architectures
+
+- Intel (x86_64)
+
+### Environnements
+
+- Natif - pris en charge par Apple
+- macOS Patcher - pris en charge par [dosdude1](https://dosdude1.com/)
+- OpenCore Legacy Patcher - pris en charge par [Dortiana](https://dortania.github.io/)
 
 ## Installation
 
 ### Clonez le dépôt
 
 ````bash
-git clone https://github.com/enioaiello/[nom].git
+git clone https://github.com/enioaiello/config-macos.git
 ````
+
+### Ouvrez le repertoire
+
+```bash
+cd config-macos
+```
+
+### Rendez le fichier executable
+
+```bash
+chmod +x install.sh
+```
+
+### Executez le script
+
+```bash
+sudo ./install.sh
+```
 
 ## Contribution
 
