@@ -26,7 +26,7 @@ Simple script de configuration de macOS prenant en charge d'OS X 10.11 a macOS 2
 - macOS 13 Ventura
 - macOS 14 Sonoma
 - macOS 15 Sequoia
-- macOS 26
+- macOS 26 Tahoe
 
 ### Architectures
 
