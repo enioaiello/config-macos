@@ -4,12 +4,16 @@
 if [ "$EUID" -ne 0 ]; then
     echo "[❌] Erreur : Ce script doit être exécuté avec les permissions de superutilisateur." >&2
     exit 1  # Sort avec le code d'erreur 1
+else
+    echo "[✅] Exécution avec les permissions de superutilisateur confirmée."
 fi
 
 # Vérifie si le script est utilisé sur macOS
 if [[ "$OSTYPE" != darwin* ]]; then
     echo "[❌] Erreur : Ce script doit être exécuté sur un environnement OS X/macOS." >&2
     exit 1
+else
+    echo "[✅] Environnement OS X/macOS confirmé."
 fi
 
 # Vérifie si Homebrew est installé
