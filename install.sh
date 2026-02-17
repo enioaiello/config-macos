@@ -7,7 +7,7 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # Vérifie si le script est utilisé sur macOS
-if [ "$OSTYPE" != "darwin"* ]; then
+if [[ "$OSTYPE" != darwin* ]]; then
     echo "Erreur : Ce script doit être exécuté sur un environnement OS X/macOS." >&2
     exit 1
 fi
