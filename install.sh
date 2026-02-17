@@ -16,6 +16,35 @@ else
     echo "[✅] Environnement OS X/macOS confirmé."
 fi
 
+# Créer les dossiers et fichiers nécessaires
+echo "[ℹ️] Création des dépendances nécessaires..."
+
+# Création du répertoire qui contient les différentes configurations de l'ordinateur
+# Les fichiers JSON pourront être modifiés par l'utilisateur pour personnaliser les configurations
+mkdir config
+
+# Vérifie si les fichiers de configuration existent déjà
+if [ -f "config/settings.json" ] || [ -f "config/applications.json" ]; then
+    echo "[⚠️] Attention : Les fichiers de configuration existent déjà. Ils ne seront pas écrasés." >&2
+else
+    echo "[ℹ️] Les fichiers de configuration seront créés."
+    touch config/settings.json
+    touch config/applications.json
+fi
+
+mkdir logs
+mkdir data
+mkdir data/wallpapers
+mkdir data/scripts
+
+# Vérifie s'il y a une erreur lors de la création des dépendances
+if [ $? -ne 0 ]; then
+    echo "[❌] Erreur : La création des dépendances a échoué." >&2
+    exit 1
+else
+    echo "[✅] Les dépendances nécessaires ont été créées avec succès."
+fi
+
 # Vérifie si Homebrew est installé
 if ! command -v brew &> /dev/null; then
     # Installe Homebrew
