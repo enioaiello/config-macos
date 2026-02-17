@@ -14,7 +14,7 @@ Simple script de configuration de macOS prenant en charge d'OS X 10.11 a macOS 2
 
 ## Prise en charge
 
-### Systemes d'exploitations
+### Systèmes d'exploitations
 
 - macOS 26 Tahoe
 - macOS 15 Sequoia
