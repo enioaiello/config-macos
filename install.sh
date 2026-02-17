@@ -30,6 +30,26 @@ else
     echo "[ℹ️] Les fichiers de configuration seront créés."
     touch config/settings.json
     touch config/applications.json
+
+    # Vérifie s'il y a une erreur lors de la création des fichiers de configuration
+    if [ $? -ne 0 ]; then
+        echo "[❌] Erreur : La création des fichiers de configuration a échoué." >&2
+        exit 1
+    else
+        echo "[✅] Les fichiers de configuration ont été créés avec succès."
+        echo "[ℹ️] Vous pouvez maintenant personnaliser les fichiers de configuration dans le dossier 'config'." >&2
+
+        # Demande à l'utilisateur s'il souhaite ouvrir les fichiers de configuration pour les personnaliser
+        read -p "Voulez-vous ouvrir les fichiers de configuration pour les personnaliser ? (y/n) " answer
+        if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
+            vim config/settings.json
+            vim config/applications.json
+        else
+            echo "[ℹ️] Vous pouvez personnaliser les fichiers de configuration plus tard en les ouvrant dans le dossier 'config'."
+            echo "[⚠️] Si les fichiers de configuration sont vides ou éronés, le script d'installation utilisera la configuration par défaut."
+            echo "[ℹ️] Pour obtenir des modèles de configuration, consultez le dépôt GitHub (https://github.com/enioaiello/config-macos)."
+        fi
+    fi
 fi
 
 mkdir logs
