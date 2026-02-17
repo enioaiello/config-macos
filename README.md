@@ -7,10 +7,10 @@ Simple script de configuration de macOS prenant en charge d'OS X 10.11 a macOS 2
 ## Fonctionnalités
 
 - Installation des applications de bases
-- Installation des dependances de bases
-- Telechargement des fonds d'ecrans
-- Creation de l'environnement de travail
-- Parametrage de la session
+- Installation des dépendances de bases
+- Téléchargement des fonds d'ecrans
+- Création de l'environnement de travail
+- Paramétrage de la session
 
 ## Prise en charge
 
@@ -46,7 +46,7 @@ Simple script de configuration de macOS prenant en charge d'OS X 10.11 a macOS 2
 git clone https://github.com/enioaiello/config-macos.git
 ````
 
-### Ouvrez le repertoire
+### Ouvrez le répertoire
 
 ```bash
 cd config-macos
@@ -58,7 +58,7 @@ cd config-macos
 chmod +x install.sh
 ```
 
-### Executez le script
+### Exécutez le script
 
 ```bash
 sudo ./install.sh
