@@ -24,3 +24,16 @@ if ! command -v brew &> /dev/null; then
 else
     echo "[✅] Homebrew est déjà installé."
 fi
+
+# Met à jour Homebrew et les formules
+echo "[ℹ️] Mise à jour de Homebrew et des formules..."
+brew update
+brew upgrade
+
+# Vérifie s'il y a une erreur
+if [ $? -ne 0 ]; then
+    echo "[❌] Erreur : La mise à jour de Homebrew a échoué." >&2
+    exit 1
+else
+    echo "[✅] Homebrew et les formules sont à jour."
+fi
