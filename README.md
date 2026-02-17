@@ -16,17 +16,17 @@ Simple script de configuration de macOS prenant en charge d'OS X 10.11 a macOS 2
 
 ### Systemes d'exploitations
 
-- OS X 10.11 El Capitan
-- macOS 10.12 Sierra
-- macOS 10.13 High Sierra
-- macOS 10.14 Mojave
-- macOS 10.15 Catalina
-- macOS 11 Big Sur
-- macOS 12 Monterey
-- macOS 13 Ventura
-- macOS 14 Sonoma
-- macOS 15 Sequoia
 - macOS 26 Tahoe
+- macOS 15 Sequoia
+- macOS 14 Sonoma
+- macOS 13 Ventura
+- macOS 12 Monterey
+- macOS 11 Big Sur
+- macOS 10.15 Catalina
+- macOS 10.14 Mojave
+- macOS 10.13 High Sierra
+- macOS 10.12 Sierra
+- OS X 10.11 El Capitan
 
 ### Architectures
 
