@@ -24,12 +24,13 @@ echo "[ℹ️] Création des dépendances nécessaires..."
 mkdir config
 
 # Vérifie si les fichiers de configuration existent déjà
-if [ -f "config/settings.json" ] || [ -f "config/applications.json" ]; then
+if [ -f "config/settings.json" ] || [ -f "config/applications.json" ] || [ -f "config/tweaks.json" ]; then
     echo "[⚠️] Attention : Les fichiers de configuration existent déjà. Ils ne seront pas écrasés." >&2
 else
     echo "[ℹ️] Les fichiers de configuration seront créés."
     touch config/settings.json
     touch config/applications.json
+    touch config/tweaks.json
 
     # Vérifie s'il y a une erreur lors de la création des fichiers de configuration
     if [ $? -ne 0 ]; then
@@ -44,6 +45,7 @@ else
         if [[ "$answer" == "y" || "$answer" == "Y" ]]; then
             vim config/settings.json
             vim config/applications.json
+            vim config/tweaks.json
         else
             echo "[ℹ️] Vous pouvez personnaliser les fichiers de configuration plus tard en les ouvrant dans le dossier 'config'."
             echo "[⚠️] Si les fichiers de configuration sont vides ou éronés, le script d'installation utilisera la configuration par défaut."
