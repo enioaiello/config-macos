@@ -15,6 +15,9 @@ INFO_ICON="[ℹ️]"
 # Pour le système
 OS_TYPE="darwin"
 
+# Autres variables
+corundum_quick_url="https://corundum.fr/quick"
+
 # Définition des fonctions de base
 
 # Fonction qui affiche un saut de ligne (\n)
@@ -25,6 +28,7 @@ function insert_newline() {
 function display_error() {
     echo "${ERROR_ICON} $1" >&2
     echo "${INFO_ICON} Le script va maintenant se terminer." >&2
+    exit 1  # Sort avec le code d'erreur 1
 }
 
 function display_success() {
@@ -50,7 +54,6 @@ insert_newline
 # Vérifie si l'utilisateur a lancé le script en superutilisateur
 if [ "$EUID" -ne 0 ]; then
     display_error "Ce script doit être exécuté avec les permissions de superutilisateur."
-    exit 1  # Sort avec le code d'erreur 1
 else
     display_success "Exécution avec les permissions de superutilisateur confirmée."
 fi
@@ -60,7 +63,6 @@ insert_newline
 # Vérifie si le script est utilisé sur macOS
 if [[ "$OSTYPE" != darwin* ]]; then
     display_error "Ce script doit être exécuté sur un environnement OS X/macOS."
-    exit 1
 else
     display_success "Environnement OS X/macOS confirmé."
 fi
@@ -93,7 +95,6 @@ fi
 # Vérifie s'il y a une erreur lors de la création du répertoire de configuration
 if [ $? -ne 0 ]; then
     display_error "La création du répertoire de configuration a échoué."
-    exit 1
 else
     display_success "Le répertoire de configuration a été créé avec succès."
 fi
@@ -110,7 +111,6 @@ else
     # Vérifie s'il y a une erreur lors de la création des fichiers de configuration
     if [ $? -ne 0 ]; then
         display_error "La création des fichiers de configuration a échoué."
-        exit 1
     else
         display_success "Les fichiers de configuration ont été créés avec succès."
         display_info "Vous pouvez maintenant personnaliser les fichiers de configuration dans le dossier 'config'."
@@ -143,7 +143,6 @@ fi
 # Vérifie s'il y a une erreur lors de la création des dépendances
 if [ $? -ne 0 ]; then
     display_error "La création des dépendances a échoué."
-    exit 1
 else
     display_success "Les dépendances nécessaires ont été créées avec succès."
 fi
@@ -157,15 +156,64 @@ else
     display_success "Homebrew est déjà installé."
 fi
 
-# Met à jour Homebrew et les formules
-display_info "Mise à jour de Homebrew et des formules..."
-brew update
-brew upgrade
+# Demande à l'utilisateur s'il souhaite mettre à jour Homebrew et les formules avant de continuer
+echo "Voulez-vous mettre à jour Homebrew et les formules avant de continuer ?"
+select yn in "Oui" "Non"; do
+    case $yn in
+        Oui ) brew update && brew upgrade; break;;
+        Non ) display_warning "La mise à jour de Homebrew et des formules a été ignorée. Il est recommandé de les mettre à jour pour éviter les problèmes de compatibilité."; break;;
+    esac
+done
 
-# Vérifie s'il y a une erreur
-if [ $? -ne 0 ]; then
-    display_error "La mise à jour de Homebrew a échoué."
-    exit 1
-else
-    display_success "Homebrew et les formules sont à jour."
-fi
+function open_corundum_quick() {
+    display_info "Ouverture de Corundum Quick dans votre navigateur..."
+    open "$corundum_quick_url"
+    echo "Veuillez sélectionner les applications que vous souhaitez installer, cliquer sur installer et copier-coller la liste d'applications proposée dans le terminal pour installer les applications sélectionnées."
+    # Propose un input pour que l'utilisateur puisse coller la liste d'applications à installer
+    read -p "Collez la liste d'applications à installer (séparées par des espaces) : " applications_to_install
+    # Installe les applications sélectionnées via Homebrew
+    for app in $applications_to_install; do
+        display_info "Installation de l'application '$app'..."
+        brew install --cask "$app"
+        if [ $? -ne 0 ]; then
+            display_warning "L'installation de l'application '$app' a échoué."
+            echo "L'installation pour cette application a été ignorée. Veuillez vérifier que le nom de l'application est correct et que l'application est disponible dans Homebrew."
+        else
+            display_success "L'application '$app' a été installée avec succès."
+        fi
+    done
+}
+
+function install_applications_from_config() {
+    display_info "Installation des applications depuis le fichier 'config/applications.json'..."
+    # Vérifie si le fichier de configuration des applications est vide
+    if [ ! -s "config/applications.json" ]; then
+        display_warning "Le fichier 'config/applications.json' est vide. Aucune application ne sera installée via Homebrew."
+        return
+    fi
+
+    # Lit le fichier de configuration des applications et installe les applications listées
+    applications=$(jq -r '.applications[]' config/applications.json)
+    for app in $applications; do
+        display_info "Installation de l'application '$app'..."
+        brew install --cask "$app"
+        if [ $? -ne 0 ]; then
+            display_warning "L'installation de l'application '$app' a échoué."
+            echo "L'installation pour cette application a été ignorée. Veuillez vérifier que le nom de l'application est correct et que l'application est disponible dans Homebrew."
+        else
+            display_success "L'application '$app' a été installée avec succès."
+        fi
+    done
+}
+
+# Demande à l'utilisateur s'il a une liste d'applications à installer via Homebrew ou s'il souhaite choisir des applications à installer depuis Corundum Quick
+echo "Avez-vous une liste d'applications ?"
+echo "Si oui, veuillez les ajouter au fichier 'config/applications.json' avant de continuer."
+echo "Si non, le script ouvrira Corundum Quick. Sélectionnez vos applications, cliquez sur installer et copiez-collez la commande d'installation dans le terminal pour installer les applications sélectionnées."
+select yn in "Homebrew" "Quick" "Ignorer"; do
+    case $yn in
+        Homebrew ) install_applications_from_config; break;;
+        Quick ) open_corundum_quick; break;;
+        Ignorer ) display_info "Vous avez choisi d'ignorer l'installation des applications."; break;;
+    esac
+done
