@@ -58,6 +58,17 @@ else
     display_success "Exécution avec les permissions de superutilisateur confirmée."
 fi
 
+# Vérifie que le script a été lancé via 'sudo' et non directement en root
+# (nécessaire pour exécuter Homebrew en tant qu'utilisateur normal)
+if [ -z "$SUDO_USER" ]; then
+    display_error "Impossible de déterminer l'utilisateur d'origine. Lancez le script avec 'sudo' et non directement en root."
+fi
+
+# Wrapper : exécute les commandes Homebrew en tant qu'utilisateur normal
+function brew_as_user() {
+    sudo -u "$SUDO_USER" brew "$@"
+}
+
 insert_newline
 
 # Vérifie si le script est utilisé sur macOS
@@ -148,10 +159,10 @@ else
 fi
 
 # Vérifie si Homebrew est installé
-if ! command -v brew &> /dev/null; then
-    # Installe Homebrew
+if ! sudo -u "$SUDO_USER" command -v brew &> /dev/null; then
+    # Installe Homebrew en tant qu'utilisateur normal (Homebrew refuse d'être installé en root)
     display_info "Homebrew n'est pas installé. Installation de Homebrew..."
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    sudo -u "$SUDO_USER" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 else
     display_success "Homebrew est déjà installé."
 fi
@@ -160,7 +171,7 @@ fi
 echo "Voulez-vous mettre à jour Homebrew et les formules avant de continuer ?"
 select yn in "Oui" "Non"; do
     case $yn in
-        Oui ) brew update && brew upgrade; break;;
+        Oui ) brew_as_user update && brew_as_user upgrade; break;;
         Non ) display_warning "La mise à jour de Homebrew et des formules a été ignorée. Il est recommandé de les mettre à jour pour éviter les problèmes de compatibilité."; break;;
     esac
 done
@@ -174,7 +185,7 @@ function open_corundum_quick() {
     # Installe les applications sélectionnées via Homebrew
     for app in $applications_to_install; do
         display_info "Installation de l'application '$app'..."
-        brew install --cask "$app"
+        brew_as_user install --cask "$app"
         if [ $? -ne 0 ]; then
             display_warning "L'installation de l'application '$app' a échoué."
             echo "L'installation pour cette application a été ignorée. Veuillez vérifier que le nom de l'application est correct et que l'application est disponible dans Homebrew."
@@ -196,7 +207,7 @@ function install_applications_from_config() {
     applications=$(jq -r '.applications[]' config/applications.json)
     for app in $applications; do
         display_info "Installation de l'application '$app'..."
-        brew install --cask "$app"
+        brew_as_user install --cask "$app"
         if [ $? -ne 0 ]; then
             display_warning "L'installation de l'application '$app' a échoué."
             echo "L'installation pour cette application a été ignorée. Veuillez vérifier que le nom de l'application est correct et que l'application est disponible dans Homebrew."
