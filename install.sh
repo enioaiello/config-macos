@@ -43,6 +43,12 @@ function display_info() {
     echo "${INFO_ICON} $1"
 }
 
+function insert_log() {
+    local log_message="$1"
+    local log_file="$LOGS_DIR/installation.log"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $log_message" >> "$log_file"
+}
+
 # Affiche un ASCII de bienvenue
 echo "                                   __ _                                                  "
 echo "  ___    ___    _ __    ___   _   / _\` |         _ __ ___     __ _    ___    ___    ___  "
