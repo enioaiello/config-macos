@@ -49,6 +49,18 @@ function insert_log() {
     echo "$(date '+%Y-%m-%d %H:%M:%S') - $log_message" >> "$log_file"
 }
 
+function clear_log() {
+    # Vérifie si un dossier '/logs/old/' n'existe pas déjà
+    if [ ! -d "$LOGS_DIR/old" ]; then
+        mkdir "$LOGS_DIR/old"
+    fi
+    # Déplace le fichier de log actuel dans le dossier '/logs/old/' avec un nom unique basé sur la date et l'heure
+    if [ -f "$LOGS_DIR/installation.log" ]; then
+        mv "$LOGS_DIR/installation.log" "$LOGS_DIR/old/installation_$(date '+%Y-%m-%d_%H-%M-%S').log"
+    fi
+    touch "$LOGS_DIR/installation.log"
+}
+
 # Affiche un ASCII de bienvenue
 echo "                                   __ _                                                  "
 echo "  ___    ___    _ __    ___   _   / _\` |         _ __ ___     __ _    ___    ___    ___  "
@@ -56,6 +68,9 @@ echo " / __|  / _ \\  | '_ \\  | __| (_) | (_| |  ____  | '_ \` _ \\  / _\` |  /
 echo "| (__  | (_) | | | | | | _|  | |  \\__, | |____| | | | | | || (_| | | (__  | (_) | \\__ \\"
 echo " \\___|  \\___/  |_| |_| |_|   |_|    |_|         |_| |_| |_| \\__,_|  \\___|  \\___/  |___/"
 insert_newline
+
+clear_log
+insert_log "Script d'installation lancé."
 
 # Vérifie si l'utilisateur a lancé le script en superutilisateur
 if [ "$EUID" -ne 0 ]; then
