@@ -91,6 +91,7 @@ fi
 # Wrapper : exécute les commandes Homebrew en tant qu'utilisateur normal
 function brew_as_user() {
     sudo -u "$SUDO_USER" brew "$@"
+    insert_log "Commande Homebrew exécutée : brew $*"
 }
 
 insert_newline
