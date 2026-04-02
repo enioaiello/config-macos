@@ -202,11 +202,14 @@ else
 fi
 
 # Vérifie si Homebrew est installé
+insert_log "Vérification de l'installation de Homebrew."
 if ! sudo -u "$SUDO_USER" command -v brew &> /dev/null; then
+    insert_log "Homebrew n'est pas installé. Installation de Homebrew."
     # Installe Homebrew en tant qu'utilisateur normal (Homebrew refuse d'être installé en root)
     display_info "Homebrew n'est pas installé. Installation de Homebrew..."
     sudo -u "$SUDO_USER" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 else
+    insert_log "Homebrew est déjà installé."
     display_success "Homebrew est déjà installé."
 fi
 
@@ -221,41 +224,50 @@ done
 
 function open_corundum_quick() {
     display_info "Ouverture de Corundum Quick dans votre navigateur..."
+    insert_log "Ouverture de Corundum Quick dans le navigateur..."
     open "$corundum_quick_url"
     echo "Veuillez sélectionner les applications que vous souhaitez installer, cliquer sur installer et copier-coller la liste d'applications proposée dans le terminal pour installer les applications sélectionnées."
     # Propose un input pour que l'utilisateur puisse coller la liste d'applications à installer
     read -p "Collez la liste d'applications à installer (séparées par des espaces) : " applications_to_install
     # Installe les applications sélectionnées via Homebrew
     for app in $applications_to_install; do
+        insert_log "Installation de l'application : $app"
         display_info "Installation de l'application '$app'..."
         brew_as_user install --cask "$app"
         if [ $? -ne 0 ]; then
             display_warning "L'installation de l'application '$app' a échoué."
+            insert_log "L'installation de l'application '$app' a échoué."
             echo "L'installation pour cette application a été ignorée. Veuillez vérifier que le nom de l'application est correct et que l'application est disponible dans Homebrew."
         else
             display_success "L'application '$app' a été installée avec succès."
+            insert_log "L'application '$app' a été installée avec succès."
         fi
     done
 }
 
 function install_applications_from_config() {
+    insert_log "Installation des applications depuis le fichier de configuration."
     display_info "Installation des applications depuis le fichier 'config/applications.json'..."
     # Vérifie si le fichier de configuration des applications est vide
     if [ ! -s "config/applications.json" ]; then
         display_warning "Le fichier 'config/applications.json' est vide. Aucune application ne sera installée via Homebrew."
+        insert_log "Le fichier 'config/applications.json' est vide. Aucune application ne sera installée via Homebrew."
         return
     fi
 
     # Lit le fichier de configuration des applications et installe les applications listées
     applications=$(jq -r '.applications[]' config/applications.json)
     for app in $applications; do
+        insert_log "Installation de l'application : $app"
         display_info "Installation de l'application '$app'..."
         brew_as_user install --cask "$app"
         if [ $? -ne 0 ]; then
             display_warning "L'installation de l'application '$app' a échoué."
+            insert_log "L'installation de l'application '$app' a échoué."
             echo "L'installation pour cette application a été ignorée. Veuillez vérifier que le nom de l'application est correct et que l'application est disponible dans Homebrew."
         else
             display_success "L'application '$app' a été installée avec succès."
+            insert_log "L'application '$app' a été installée avec succès."
         fi
     done
 }
