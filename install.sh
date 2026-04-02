@@ -183,8 +183,10 @@ fi
 # Vérifie si les dossiers de logs et de données existent déjà
 if [ -d "logs" ] || [ -d "data" ]; then
     display_warning "Les dossiers de logs ou de données existent déjà. Ils ne seront pas recréés."
+    insert_log "Les dossiers de logs ou de données existent déjà. Ils ne seront pas recréés."
 else
     display_info "Les dossiers de logs et de données seront créés."
+    insert_log "Les dossiers de logs et de données seront créés."
     mkdir logs
     mkdir data
     mkdir data/wallpapers
@@ -194,6 +196,7 @@ fi
 # Vérifie s'il y a une erreur lors de la création des dépendances
 if [ $? -ne 0 ]; then
     display_error "La création des dépendances a échoué."
+    insert_log "La création des dépendances a échoué."
 else
     display_success "Les dépendances nécessaires ont été créées avec succès."
 fi
