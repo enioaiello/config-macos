@@ -109,6 +109,7 @@ insert_newline
 
 # Créer les dossiers et fichiers nécessaires
 display_info "Création des dépendances nécessaires..."
+insert_log "Création des dépendances nécessaires."
 
 # Création du répertoire qui contient les différentes configurations de l'ordinateur
 # Les fichiers JSON pourront être modifiés par l'utilisateur pour personnaliser les configurations
@@ -116,8 +117,10 @@ display_info "Création des dépendances nécessaires..."
 # Vérifie si le répertoire de configuration existe déjà
 if [ -d "config" ]; then
     display_warning "Le répertoire de configuration existe déjà. Il ne sera pas recréé."
+    insert_log "Le répertoire de configuration existe déjà. Il ne sera pas recréé."
 else
     display_info "Le répertoire de configuration sera créé."
+    insert_log "Le répertoire de configuration sera créé."
 fi
 
 insert_newline
@@ -125,16 +128,21 @@ insert_newline
 # Vérifie si le dossier de configuration existe déjà avant de le créer
 if [ -d "config" ]; then
     display_warning "Le répertoire de configuration existe déjà. Il ne sera pas recréé."
+    insert_log "Le répertoire de configuration existe déjà. Il ne sera pas recréé."
 else
     display_info "Le répertoire de configuration sera créé."
+    insert_log "Le répertoire de configuration sera créé."
     mkdir config
+    insert_log "Répertoire de configuration créé."
 fi
 
 # Vérifie s'il y a une erreur lors de la création du répertoire de configuration
 if [ $? -ne 0 ]; then
     display_error "La création du répertoire de configuration a échoué."
+    insert_log "La création du répertoire de configuration a échoué."
 else
     display_success "Le répertoire de configuration a été créé avec succès."
+    insert_log "Le répertoire de configuration a été créé avec succès."
 fi
 
 # Vérifie si les fichiers de configuration existent déjà
