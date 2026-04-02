@@ -85,6 +85,7 @@ fi
 # (nécessaire pour exécuter Homebrew en tant qu'utilisateur normal)
 if [ -z "$SUDO_USER" ]; then
     display_error "Impossible de déterminer l'utilisateur d'origine. Lancez le script avec 'sudo' et non directement en root."
+    insert_log "Impossible de déterminer l'utilisateur d'origine. Le script va se terminer."
 fi
 
 # Wrapper : exécute les commandes Homebrew en tant qu'utilisateur normal
