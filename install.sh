@@ -99,8 +99,10 @@ insert_newline
 # Vérifie si le script est utilisé sur macOS
 if [[ "$OSTYPE" != darwin* ]]; then
     display_error "Ce script doit être exécuté sur un environnement OS X/macOS."
+    insert_log "Environnement non compatible : $OSTYPE. Le script va se terminer."
 else
     display_success "Environnement OS X/macOS confirmé."
+    insert_log "Environnement OS X/macOS confirmé."
 fi
 
 insert_newline
