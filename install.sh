@@ -148,8 +148,10 @@ fi
 # Vérifie si les fichiers de configuration existent déjà
 if [ -f "config/settings.json" ] || [ -f "config/applications.json" ] || [ -f "config/tweaks.json" ]; then
     display_warning "Les fichiers de configuration existent déjà. Ils ne seront pas écrasés."
+    insert_log "Les fichiers de configuration existent déjà. Ils ne seront pas écrasés."
 else
     display_info "Les fichiers de configuration seront créés."
+    insert_log "Les fichiers de configuration seront créés."
     touch config/settings.json
     touch config/applications.json
     touch config/tweaks.json
@@ -157,8 +159,10 @@ else
     # Vérifie s'il y a une erreur lors de la création des fichiers de configuration
     if [ $? -ne 0 ]; then
         display_error "La création des fichiers de configuration a échoué."
+        insert_log "La création des fichiers de configuration a échoué."
     else
         display_success "Les fichiers de configuration ont été créés avec succès."
+        insert_log "Les fichiers de configuration ont été créés avec succès."
         display_info "Vous pouvez maintenant personnaliser les fichiers de configuration dans le dossier 'config'."
 
         # Demande à l'utilisateur s'il souhaite ouvrir les fichiers de configuration pour les personnaliser
@@ -171,6 +175,7 @@ else
             display_info "Vous pouvez personnaliser les fichiers de configuration plus tard en les ouvrant dans le dossier 'config'."
             display_warning "Si les fichiers de configuration sont vides ou éronés, le script d'installation utilisera la configuration par défaut."
             display_info "Pour obtenir des modèles de configuration, consultez le dépôt GitHub (https://github.com/enioaiello/config-macos)."
+            insert_log "Pour obtenir des modèles de configuration, consultez le dépôt GitHub (https://github.com/enioaiello/config-macos)."
         fi
     fi
 fi
