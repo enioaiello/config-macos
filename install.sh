@@ -75,8 +75,10 @@ insert_log "Script d'installation lancé."
 # Vérifie si l'utilisateur a lancé le script en superutilisateur
 if [ "$EUID" -ne 0 ]; then
     display_error "Ce script doit être exécuté avec les permissions de superutilisateur."
+    insert_log "Lancement du script sans les permissions de superutilisateur. Le script va se terminer."
 else
     display_success "Exécution avec les permissions de superutilisateur confirmée."
+    insert_log "Lancement du script avec les permissions de superutilisateur."
 fi
 
 # Vérifie que le script a été lancé via 'sudo' et non directement en root
