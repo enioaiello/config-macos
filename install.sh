@@ -75,19 +75,23 @@ insert_log "Script d'installation lancé."
 # Vérifie si l'utilisateur a lancé le script en superutilisateur
 if [ "$EUID" -ne 0 ]; then
     display_error "Ce script doit être exécuté avec les permissions de superutilisateur."
+    insert_log "Lancement du script sans les permissions de superutilisateur. Le script va se terminer."
 else
     display_success "Exécution avec les permissions de superutilisateur confirmée."
+    insert_log "Lancement du script avec les permissions de superutilisateur."
 fi
 
 # Vérifie que le script a été lancé via 'sudo' et non directement en root
 # (nécessaire pour exécuter Homebrew en tant qu'utilisateur normal)
 if [ -z "$SUDO_USER" ]; then
     display_error "Impossible de déterminer l'utilisateur d'origine. Lancez le script avec 'sudo' et non directement en root."
+    insert_log "Impossible de déterminer l'utilisateur d'origine. Le script va se terminer."
 fi
 
 # Wrapper : exécute les commandes Homebrew en tant qu'utilisateur normal
 function brew_as_user() {
     sudo -u "$SUDO_USER" brew "$@"
+    insert_log "Commande Homebrew exécutée : brew $*"
 }
 
 insert_newline
@@ -95,14 +99,17 @@ insert_newline
 # Vérifie si le script est utilisé sur macOS
 if [[ "$OSTYPE" != darwin* ]]; then
     display_error "Ce script doit être exécuté sur un environnement OS X/macOS."
+    insert_log "Environnement non compatible : $OSTYPE. Le script va se terminer."
 else
     display_success "Environnement OS X/macOS confirmé."
+    insert_log "Environnement OS X/macOS confirmé."
 fi
 
 insert_newline
 
 # Créer les dossiers et fichiers nécessaires
 display_info "Création des dépendances nécessaires..."
+insert_log "Création des dépendances nécessaires."
 
 # Création du répertoire qui contient les différentes configurations de l'ordinateur
 # Les fichiers JSON pourront être modifiés par l'utilisateur pour personnaliser les configurations
@@ -110,8 +117,10 @@ display_info "Création des dépendances nécessaires..."
 # Vérifie si le répertoire de configuration existe déjà
 if [ -d "config" ]; then
     display_warning "Le répertoire de configuration existe déjà. Il ne sera pas recréé."
+    insert_log "Le répertoire de configuration existe déjà. Il ne sera pas recréé."
 else
     display_info "Le répertoire de configuration sera créé."
+    insert_log "Le répertoire de configuration sera créé."
 fi
 
 insert_newline
@@ -119,23 +128,30 @@ insert_newline
 # Vérifie si le dossier de configuration existe déjà avant de le créer
 if [ -d "config" ]; then
     display_warning "Le répertoire de configuration existe déjà. Il ne sera pas recréé."
+    insert_log "Le répertoire de configuration existe déjà. Il ne sera pas recréé."
 else
     display_info "Le répertoire de configuration sera créé."
+    insert_log "Le répertoire de configuration sera créé."
     mkdir config
+    insert_log "Répertoire de configuration créé."
 fi
 
 # Vérifie s'il y a une erreur lors de la création du répertoire de configuration
 if [ $? -ne 0 ]; then
     display_error "La création du répertoire de configuration a échoué."
+    insert_log "La création du répertoire de configuration a échoué."
 else
     display_success "Le répertoire de configuration a été créé avec succès."
+    insert_log "Le répertoire de configuration a été créé avec succès."
 fi
 
 # Vérifie si les fichiers de configuration existent déjà
 if [ -f "config/settings.json" ] || [ -f "config/applications.json" ] || [ -f "config/tweaks.json" ]; then
     display_warning "Les fichiers de configuration existent déjà. Ils ne seront pas écrasés."
+    insert_log "Les fichiers de configuration existent déjà. Ils ne seront pas écrasés."
 else
     display_info "Les fichiers de configuration seront créés."
+    insert_log "Les fichiers de configuration seront créés."
     touch config/settings.json
     touch config/applications.json
     touch config/tweaks.json
@@ -143,8 +159,10 @@ else
     # Vérifie s'il y a une erreur lors de la création des fichiers de configuration
     if [ $? -ne 0 ]; then
         display_error "La création des fichiers de configuration a échoué."
+        insert_log "La création des fichiers de configuration a échoué."
     else
         display_success "Les fichiers de configuration ont été créés avec succès."
+        insert_log "Les fichiers de configuration ont été créés avec succès."
         display_info "Vous pouvez maintenant personnaliser les fichiers de configuration dans le dossier 'config'."
 
         # Demande à l'utilisateur s'il souhaite ouvrir les fichiers de configuration pour les personnaliser
@@ -157,6 +175,7 @@ else
             display_info "Vous pouvez personnaliser les fichiers de configuration plus tard en les ouvrant dans le dossier 'config'."
             display_warning "Si les fichiers de configuration sont vides ou éronés, le script d'installation utilisera la configuration par défaut."
             display_info "Pour obtenir des modèles de configuration, consultez le dépôt GitHub (https://github.com/enioaiello/config-macos)."
+            insert_log "Pour obtenir des modèles de configuration, consultez le dépôt GitHub (https://github.com/enioaiello/config-macos)."
         fi
     fi
 fi
@@ -164,8 +183,10 @@ fi
 # Vérifie si les dossiers de logs et de données existent déjà
 if [ -d "logs" ] || [ -d "data" ]; then
     display_warning "Les dossiers de logs ou de données existent déjà. Ils ne seront pas recréés."
+    insert_log "Les dossiers de logs ou de données existent déjà. Ils ne seront pas recréés."
 else
     display_info "Les dossiers de logs et de données seront créés."
+    insert_log "Les dossiers de logs et de données seront créés."
     mkdir logs
     mkdir data
     mkdir data/wallpapers
@@ -175,16 +196,20 @@ fi
 # Vérifie s'il y a une erreur lors de la création des dépendances
 if [ $? -ne 0 ]; then
     display_error "La création des dépendances a échoué."
+    insert_log "La création des dépendances a échoué."
 else
     display_success "Les dépendances nécessaires ont été créées avec succès."
 fi
 
 # Vérifie si Homebrew est installé
+insert_log "Vérification de l'installation de Homebrew."
 if ! sudo -u "$SUDO_USER" command -v brew &> /dev/null; then
+    insert_log "Homebrew n'est pas installé. Installation de Homebrew."
     # Installe Homebrew en tant qu'utilisateur normal (Homebrew refuse d'être installé en root)
     display_info "Homebrew n'est pas installé. Installation de Homebrew..."
     sudo -u "$SUDO_USER" /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 else
+    insert_log "Homebrew est déjà installé."
     display_success "Homebrew est déjà installé."
 fi
 
@@ -199,41 +224,50 @@ done
 
 function open_corundum_quick() {
     display_info "Ouverture de Corundum Quick dans votre navigateur..."
+    insert_log "Ouverture de Corundum Quick dans le navigateur..."
     open "$corundum_quick_url"
     echo "Veuillez sélectionner les applications que vous souhaitez installer, cliquer sur installer et copier-coller la liste d'applications proposée dans le terminal pour installer les applications sélectionnées."
     # Propose un input pour que l'utilisateur puisse coller la liste d'applications à installer
     read -p "Collez la liste d'applications à installer (séparées par des espaces) : " applications_to_install
     # Installe les applications sélectionnées via Homebrew
     for app in $applications_to_install; do
+        insert_log "Installation de l'application : $app"
         display_info "Installation de l'application '$app'..."
         brew_as_user install --cask "$app"
         if [ $? -ne 0 ]; then
             display_warning "L'installation de l'application '$app' a échoué."
+            insert_log "L'installation de l'application '$app' a échoué."
             echo "L'installation pour cette application a été ignorée. Veuillez vérifier que le nom de l'application est correct et que l'application est disponible dans Homebrew."
         else
             display_success "L'application '$app' a été installée avec succès."
+            insert_log "L'application '$app' a été installée avec succès."
         fi
     done
 }
 
 function install_applications_from_config() {
+    insert_log "Installation des applications depuis le fichier de configuration."
     display_info "Installation des applications depuis le fichier 'config/applications.json'..."
     # Vérifie si le fichier de configuration des applications est vide
     if [ ! -s "config/applications.json" ]; then
         display_warning "Le fichier 'config/applications.json' est vide. Aucune application ne sera installée via Homebrew."
+        insert_log "Le fichier 'config/applications.json' est vide. Aucune application ne sera installée via Homebrew."
         return
     fi
 
     # Lit le fichier de configuration des applications et installe les applications listées
     applications=$(jq -r '.applications[]' config/applications.json)
     for app in $applications; do
+        insert_log "Installation de l'application : $app"
         display_info "Installation de l'application '$app'..."
         brew_as_user install --cask "$app"
         if [ $? -ne 0 ]; then
             display_warning "L'installation de l'application '$app' a échoué."
+            insert_log "L'installation de l'application '$app' a échoué."
             echo "L'installation pour cette application a été ignorée. Veuillez vérifier que le nom de l'application est correct et que l'application est disponible dans Homebrew."
         else
             display_success "L'application '$app' a été installée avec succès."
+            insert_log "L'application '$app' a été installée avec succès."
         fi
     done
 }
